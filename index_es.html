@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type"/>
+<!-- Set charset to UTF-8 -->
+<meta charset="utf-8"/>
+<title>Generador de Claves PGP</title>
+<meta content="Un generador de claves PGP del lado del cliente, sencillo y fácil de usar" name="description"/>
+<meta content="Heiswayi Nrird" name="author"/>
+<meta content="width=device-width, initial-scale=1, maximum-scale=1" name="viewport"/>
+<meta content="IE=edge" http-equiv="X-UA-Compatible"/>
+<link href="assets/css/bootstrap.min.css" media="screen" rel="stylesheet" type="text/css"/>
+<link href="assets/css/custom.css" media="screen" rel="stylesheet" type="text/css"/>
+<script src="assets/js/jquery-1.11.2.min.js" type="text/javascript"></script>
+<script src="assets/js/bootstrap.min.js" type="text/javascript"></script>
+<script src="assets/js/kbpgp-1.0.0-min.js" type="text/javascript"></script>
+<script src="assets/js/FileSaver.js" type="text/javascript"></script>
+<script src="assets/js/pgpkeygen.js" type="text/javascript"></script>
+<!--[if IE 9]>
+		<script type="text/javascript" src="assets/js/placeholder.js"></script>
+	<![endif]-->
+<!-- Main script -->
+<script type="text/javascript">
+        $(document).ready(function() {
+
+            /* Dynamic key size menus */
+            $('#algorithm').change(function() {
+                populateKeysizeDropdown();
+                $('#bitlength').removeAttr('disabled');
+            });
+
+            /* Set event handlers */
+            $('form#keygen').submit(function(e) {
+                e.preventDefault();
+                genKeyPair();
+            });
+
+            $('#download_priv_key').on('click', downloadPrivKey);
+            $('#download_pub_key').on('click', downloadPubKey);
+
+            $('#name, #email, #comments, #algorithm, #bitlength, #expire, #passphrase').tooltip({
+                trigger: 'hover',
+                placement: 'top'
+            });
+
+            $('[data-toggle="popover"]').popover({placement: 'top'});
+        });
+    </script>
+<!-- Google Analytics -->
+<script>
+        (function(i, s, o, g, r, a, m) {
+            i['GoogleAnalyticsObject'] = r;
+            i[r] = i[r] || function() {
+                (i[r].q = i[r].q || []).push(arguments)
+            }, i[r].l = 1 * new Date();
+            a = s.createElement(o),
+                m = s.getElementsByTagName(o)[0];
+            a.async = 1;
+            a.src = g;
+            m.parentNode.insertBefore(a, m)
+        })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
+
+        ga('create', 'UA-58296043-4', 'auto');
+        ga('send', 'pageview');
+    </script>
+</head>
+<body>
+<div class="container">
+<div class="row content">
+<div class="col-md-12">
+<div class="page-header">
+<h1 class="title">Generador de Claves PGP</h1>
+                    Generador de claves PGP del lado del cliente, seguro y fácil de usar
+                </div>
+<div class="tabbable">
+<!-- Nav tabs -->
+<ul class="nav nav-tabs" role="tablist">
+<li class="active" role="presentation"><a aria-controls="generator" data-toggle="tab" href="#generator" role="tab">Generar un par de claves PGP</a></li>
+</ul>
+<!-- Tab panes -->
+<div class="tab-content">
+<div class="tab-pane active" id="generator" role="tabpanel">
+<div class="row generator">
+<div class="col-md-5">
+<div class="panel panel-default">
+<div class="panel-heading">
+<h3 class="panel-title">Opciones</h3>
+</div>
+<div class="panel-body">
+<form action="" id="keygen" method="post" name="keygen">
+<div class="form-group">
+<label class="sr-only" for="name">Su nombre</label>
+<div class="input-group">
+<div class="input-group-addon"><span aria-hidden="true" class="glyphicon glyphicon-user"></span></div>
+<input class="form-control" id="name" name="name" placeholder="Su nombre" required="" title="Ingrese su nombre" type="text"/>
+<div class="input-group-addon">Obligatorio</div>
+</div>
+</div>
+<div class="form-group">
+<label class="sr-only" for="email">Correo electrónico</label>
+<div class="input-group">
+<div class="input-group-addon"><span aria-hidden="true" class="glyphicon glyphicon-envelope"></span></div>
+<input class="form-control" id="email" name="email" placeholder="you@domain.com" required="" title="Ingrese una dirección de correo válida" type="email"/>
+<div class="input-group-addon">Obligatorio</div>
+</div>
+<span class="help-block" id="helpBlock"><a data-content="Su dirección de correo se incluirá como información pública en su clave PGP pública, lo que permitirá que otros programas PGP la importen fácilmente. Si no proporciona un correo electrónico, es posible que el software no pueda asociarlo con su clave pública y deba descifrar manualmente los mensajes cifrados con PGP." data-toggle="popover" href="#" title="Correo electrónico address">Correo electrónico address: Why it is required?</a></span>
+</div>
+<div class="form-group">
+<label class="sr-only" for="comments">Comentario opcional</label>
+<div class="input-group">
+<div class="input-group-addon"><span aria-hidden="true" class="glyphicon glyphicon-info-sign"></span></div>
+<input class="form-control" id="comments" name="comments" placeholder="Optional comments" title="Ingrese un comentario opcional" type="text"/>
+</div>
+</div>
+<div class="form-group">
+<label class="sr-only" for="algorithm">Algoritmo</label>
+<div class="input-group">
+<div class="input-group-addon"><span aria-hidden="true" class="glyphicon glyphicon-cog"></span></div>
+<select class="form-control" id="algorithm" name="algorithm" required="" title="Seleccione un algoritmo de cifrado">
+<option class="disabled" disabled="disabled" selected="selected" value="">Algoritmo</option>
+<option value="rsa">RSA (Recomendado)</option>
+<option value="ecc">ECC (Criptografía de Curva Elíptica)</option>
+</select>
+<div class="input-group-addon">Obligatorio</div>
+</div>
+</div>
+<div class="form-group">
+<label class="sr-only" for="bitlength">Longitud de bits</label>
+<div class="input-group">
+<div class="input-group-addon"><span aria-hidden="true" class="glyphicon glyphicon-signal"></span></div>
+<select class="form-control" disabled="" id="bitlength" name="bitlength" required="" title="Seleccione el tamaño de la clave">
+<option class="disabled" selected="selected" value="">Tamaño de la clave</option>
+</select>
+<div class="input-group-addon">Obligatorio</div>
+</div>
+</div>
+<div class="form-group">
+<label class="sr-only" for="expire">Expiración</label>
+<div class="input-group">
+<div class="input-group-addon"><span aria-hidden="true" class="glyphicon glyphicon-hourglass"></span></div>
+<select class="form-control" id="expire" name="expire" required="" title="Expiration of your subkeys">
+<option class="disabled" disabled="disabled" selected="selected" value="">Expiración</option>
+<option value="0">Nunca</option>
+<option value="1">1 año</option>
+<option value="2">2 años</option>
+<option value="4">4 años</option>
+<option value="8">8 años</option>
+</select>
+<div class="input-group-addon">Obligatorio</div>
+</div>
+</div>
+<div class="form-group">
+<label class="sr-only" for="passphrase">Frase de contraseña</label>
+<div class="input-group">
+<div class="input-group-addon"><span aria-hidden="true" class="glyphicon glyphicon-text-background"></span></div>
+<input class="form-control" id="passphrase" name="passphrase" pattern=".{5,}" placeholder="Frase de contraseña" required="" title="Ingrese una frase de contraseña de al menos 5 caracteres" type="password"/>
+<div class="input-group-addon">Obligatorio</div>
+</div>
+<span class="help-block" id="helpBlock"><a data-content="Frase de contraseña is a like a password to protect your private PGP key. This password offers an extra layer of protection in case someone manage to steal your private PGP key. Please pick a password you will remember, because if you forget this password, there is no way to recover your password and no way for you to decrypt PGP-encrypted messages sent to you!" data-toggle="popover" href="#" title="Frase de contraseña">Frase de contraseña: What is this?</a></span>
+</div>
+<input class="btn btn-primary btn-lg btn-block send" id="generate_keys_btn" name="send" type="submit" value="Generar claves"/>
+<a class="btn btn-link btn-block hide" href="index.html" id="start_again_btn">Haga clic aquí para generar otro par de claves</a>
+</form>
+</div>
+</div>
+</div>
+<div class="col-md-7">
+<input id="key_short_id" name="key_short_id" type="hidden" value=""/>
+<input id="btn_update_ts" name="btn_update_ts" type="hidden" value="0"/>
+<div class="panel panel-default">
+<div class="panel-heading">
+<h3 class="panel-title">Clave pública</h3>
+</div>
+<div class="panel-body">
+<textarea class="form-control message" id="pubkey" name="pubkey" placeholder="Aquí se generará su clave pública." readonly="" rows="7"></textarea>
+<span class="help-block" id="helpBlock"><a class="btn btn-danger download disabled" href="#" id="download_pub_key" name="download_pub_key" title="Este botón se habilitará después de generar su par de claves."><span aria-hidden="true" class="glyphicon glyphicon-save"></span> Descargar clave pública (.ASC)</a> <a class="btn btn-link" data-content="Puede publicar esta clave en su sitio web o en la firma de sus correos. Cualquier persona podrá usarla para enviarle mensajes cifrados." data-toggle="popover" href="#" title="Clave pública">Más información</a>
+</span>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<h3 class="panel-title">Clave privada</h3>
+</div>
+<div class="panel-body">
+<textarea class="form-control message" id="privkey" name="privkey" placeholder="Aquí se generará su clave privada." readonly="" rows="7"></textarea>
+<span class="help-block" id="helpBlock"><a class="btn btn-danger download disabled" href="#" id="download_priv_key" name="download_priv_key" title="Este botón se habilitará después de generar su par de claves."><span aria-hidden="true" class="glyphicon glyphicon-save"></span> Descargar clave privada (.ASC)</a> <a class="btn btn-link" data-content="Guarde su clave privada en un lugar seguro. La necesitará para descifrar los mensajes cifrados enviados con su clave pública." data-toggle="popover" href="#" title="Clave privada">Más información</a>
+</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<script>
+    $('body').on('click', function (e) {
+      //did not click a popover toggle or popover
+      if ($(e.target).data('toggle') !== 'popover'
+        && $(e.target).parents('.popover.in').length === 0) {
+        $('[data-toggle="popover"]').popover('hide');
+      }
+    });
+    </script>
+<footer class="container"><hr/><p><strong>Licencia:</strong> Este proyecto se distribuye bajo los términos de la GNU General Public License versión 3 o cualquier versión posterior (GPL v3+).</p><p><strong>Repositorio oficial:</strong> <a href="https://gitlab.com/huezo/pgp" target="_blank">https://gitlab.com/huezo/pgp</a></p></footer></body>
+</html>
