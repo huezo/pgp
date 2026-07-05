@@ -104,13 +104,13 @@
 <input class="form-control" id="email" name="email" placeholder="you@domain.com" required="" title="Ingrese una dirección de correo válida" type="email"/>
 <div class="input-group-addon">Obligatorio</div>
 </div>
-<span class="help-block" id="helpBlock"><a data-content="Su dirección de correo se incluirá como información pública en su clave PGP pública, lo que permitirá que otros programas PGP la importen fácilmente. Si no proporciona un correo electrónico, es posible que el software no pueda asociarlo con su clave pública y deba descifrar manualmente los mensajes cifrados con PGP." data-toggle="popover" href="#" title="Correo electrónico address">Correo electrónico address: Why it is required?</a></span>
+<span class="help-block" id="helpBlock"><a data-content="Su dirección de correo se incluirá como información pública en su clave PGP pública, lo que permitirá que otros programas PGP la importen fácilmente. Si no proporciona un correo electrónico, es posible que el software no pueda asociarlo con su clave pública y deba descifrar manualmente los mensajes cifrados con PGP." data-toggle="popover" href="#" title="Correo electrónico">Correo electrónico: ¿Por qué es obligatorio?</a></span>
 </div>
 <div class="form-group">
 <label class="sr-only" for="comments">Comentario opcional</label>
 <div class="input-group">
 <div class="input-group-addon"><span aria-hidden="true" class="glyphicon glyphicon-info-sign"></span></div>
-<input class="form-control" id="comments" name="comments" placeholder="Optional comments" title="Ingrese un comentario opcional" type="text"/>
+<input class="form-control" id="comments" name="comments" placeholder="Comentario opcional" title="Ingrese un comentario opcional" type="text"/>
 </div>
 </div>
 <div class="form-group">
@@ -139,7 +139,7 @@
 <label class="sr-only" for="expire">Expiración</label>
 <div class="input-group">
 <div class="input-group-addon"><span aria-hidden="true" class="glyphicon glyphicon-hourglass"></span></div>
-<select class="form-control" id="expire" name="expire" required="" title="Expiration of your subkeys">
+<select class="form-control" id="expire" name="expire" required="" title="Seleccione el período de expiración de sus subclaves.">
 <option class="disabled" disabled="disabled" selected="selected" value="">Expiración</option>
 <option value="0">Nunca</option>
 <option value="1">1 año</option>
@@ -157,7 +157,7 @@
 <input class="form-control" id="passphrase" name="passphrase" pattern=".{5,}" placeholder="Frase de contraseña" required="" title="Ingrese una frase de contraseña de al menos 5 caracteres" type="password"/>
 <div class="input-group-addon">Obligatorio</div>
 </div>
-<span class="help-block" id="helpBlock"><a data-content="Frase de contraseña is a like a password to protect your private PGP key. This password offers an extra layer of protection in case someone manage to steal your private PGP key. Please pick a password you will remember, because if you forget this password, there is no way to recover your password and no way for you to decrypt PGP-encrypted messages sent to you!" data-toggle="popover" href="#" title="Frase de contraseña">Frase de contraseña: What is this?</a></span>
+<span class="help-block" id="helpBlock"><a data-content="La frase de contraseña funciona como una contraseña que protege su clave privada PGP. Proporciona una capa adicional de seguridad en caso de que alguien obtenga acceso a su clave privada. Elija una frase que pueda recordar, ya que si la olvida no será posible recuperarla ni descifrar los mensajes PGP cifrados para usted." data-toggle="popover" href="#" title="Frase de contraseña">Frase de contraseña: ¿Qué es esto?</a></span>
 </div>
 <input class="btn btn-primary btn-lg btn-block send" id="generate_keys_btn" name="send" type="submit" value="Generar claves"/>
 <a class="btn btn-link btn-block hide" href="index.html" id="start_again_btn">Haga clic aquí para generar otro par de claves</a>
